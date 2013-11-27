@@ -276,7 +276,7 @@ class Money
 
     public function format()
     {
-        return '$' . number_format($this->getAmount() / 100, 2, '.', '');
+        return '$' . number_format($this->getAmount() / 100, 2);
     }
 
     /**
