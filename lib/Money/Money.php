@@ -274,6 +274,11 @@ class Money
         return (int) $units;
     }
 
+    public function format()
+    {
+        return '$' . number_format($this->getAmount() / 100, 2, '.', '');
+    }
+
     /**
      * Convert into formatted amount (hardcoded to USD for the time being).
      *
@@ -281,6 +286,6 @@ class Money
      */
     public function __toString()
     {
-        return '$' . number_format($this->amount / 100, 2);
+        return number_format($this->getAmount() / 100, 2);
     }
 }
