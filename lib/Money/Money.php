@@ -143,7 +143,7 @@ class Money
 
     /**
      * @param \Money\Money $addend
-     *@return \Money\Money 
+     *@return \Money\Money
      */
     public function add(Money $addend)
     {
@@ -272,5 +272,15 @@ class Money
         $units .= isset($matches[5]) ? $matches[5] : "0";
 
         return (int) $units;
+    }
+
+    /**
+     * Convert into formatted amount (hardcoded to USD for the time being).
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return number_format($this->amount / 100, 2);
     }
 }
