@@ -1,5 +1,5 @@
 {
-    "name": "mathiasverraes/money",
+    "name": "swarming/money",
     "description": "PHP implementation of Fowler's Money pattern",
     "type": "library",
     "keywords": [ "Money", "Value Object", "Generic Sub-domain" ],
@@ -9,6 +9,10 @@
         {
             "name": "Mathias Verraes",
             "email": "mathias@verraes.net"
+        },
+        {
+            "name": "Aken Roberts",
+            "email": "aken@swarmingtech.com"
         }
     ],
     "require": {
