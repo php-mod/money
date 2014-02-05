@@ -1,7 +1,7 @@
 Money
 =====
 
-Fork from [Mathias Verraes implementation of Fowley's money pattern][https://github.com/mathiasverraes/money].
+Fork from [Mathias Verraes implementation of Fowley's money pattern](https://github.com/mathiasverraes/money).
 
 PHP 5.3+ library to make working with money safer, easier, and fun!
 
@@ -50,7 +50,7 @@ $ composer.phar install
 
 Added Features
 --------------
-This fork replaces the maping of currencies from a simple ISO 4217 map from openexchangerates.org with the data contained in [Ruby's Money][https://github.com/RubyMoney] mapping. This allows for a few additional features, including generating formatted output string for the Money objects.
+This fork replaces the maping of currencies from a simple ISO 4217 map from openexchangerates.org with the data contained in [Ruby's Money](https://github.com/RubyMoney) mapping. This allows for a few additional features, including generating formatted output string for the Money objects.
 
 ```php
 <?php
@@ -62,7 +62,8 @@ echo Money::EUR(500)->formattedString();
 
 Output:
 ```
-
+€ 5.00
+```
 
 
 Integration
