@@ -1,7 +1,7 @@
 Money
 =====
 
-[![Build Status](https://api.travis-ci.org/mathiasverraes/money.png?branch=master)](http://travis-ci.org/mathiasverraes/money)
+Fork from [Mathias Verraes implementation of Fowley's money pattern][https://github.com/mathiasverraes/money].
 
 PHP 5.3+ library to make working with money safer, easier, and fun!
 
@@ -35,7 +35,7 @@ Install the library using [composer][1]. Add the following to your `composer.jso
 ```json
 {
     "require": {
-        "mathiasverraes/money": "dev-master"
+        "hemeragestao/money": "dev-master"
     },
     "minimum-stability": "dev"    
 }
@@ -46,6 +46,24 @@ Now run the `install` command.
 ```sh
 $ composer.phar install
 ```
+
+
+Added Features
+--------------
+This fork replaces the maping of currencies from a simple ISO 4217 map from openexchangerates.org with the data contained in [Ruby's Money][https://github.com/RubyMoney] mapping. This allows for a few additional features, including generating formatted output string for the Money objects.
+
+```php
+<?php
+
+use Money\Money;
+
+echo Money::EUR(500)->formattedString();
+```
+
+Output:
+```
+
+
 
 Integration
 -----------
