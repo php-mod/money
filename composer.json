@@ -1,6 +1,6 @@
 {
-    "name": "mathiasverraes/money",
-    "description": "PHP implementation of Fowler's Money pattern",
+    "name": "hemeragestao/money",
+    "description": "Fork of Mathias Verraes PHP implementation of Fowler's Money pattern",
     "type": "library",
     "keywords": [ "Money", "Value Object", "Generic Sub-domain" ],
     "homepage": "http://verraes.net/2011/04/fowler-money-pattern-in-php/",
@@ -9,6 +9,10 @@
         {
             "name": "Mathias Verraes",
             "email": "mathias@verraes.net"
+        },
+        {
+            "name": "Gustavo Santos",
+            "email": "gustavo.santos@hgestao.com.br"
         }
     ],
     "require": {
@@ -30,10 +34,6 @@
 
     "config": {
         "bin-dir": "bin"
-    },
-    "suggest": {
-        "pink-tie/money-bundle": "Pink-Tie's Symfony2 integration with Money library",
-        "Sylius/SyliusMoneyBundle": "Sylius' Symfony2 integration with Money library"
     },
     "minimum-stability": "dev"
 }

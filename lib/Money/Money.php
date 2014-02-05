@@ -273,4 +273,42 @@ class Money
 
         return (int) $units;
     }
+    
+    /**
+     * Extracts a formatted money string.
+     * @example echo Money::USD(500)->formattedString();
+     * @return string
+     */
+    public function formattedString()
+    {
+        $decimal_separator = $this->currency->getDecimals();
+        $thousand_separator = $this->currency->getThousands();
+        $multiplier = $this->currency->getMultiplier();
+        $decimals = (int) log10($multiplier);        
+        $number = $this->getAmount()/$multiplier;
+        $value = '';
+        $prefix = '';
+        $suffix = '';        
+        
+        if($number < 0)
+        {
+            $prefix .= '-';
+            $number = -$number;            
+        }       
+        
+        $value .= number_format($number, $decimals, $decimal_separator, $thousand_separator);
+        
+        if($this->currency->hasSymbolFirst())
+        {
+             $prefix .= $this->currency->getSymbol();
+        }
+        else
+        {
+             $suffix .= $this->currency->getSymbol();
+        }    
+       
+        return $prefix . $value . $suffix;
+    }
+    
+    
 }
