@@ -21,11 +21,17 @@ class Currency
     /** @var string */
     private $symbol;
     
-    /** @var int */
+    /** @var float */
+    private $multiplier;
+    
+     /** @var string */
     private $decimals;
     
-    /** @var float */
-    private $rounding;
+     /** @var string */
+    private $thousands;
+    
+     /** @var bool */
+    private $symbolFirst;
 
     /**
      * @param string $name
@@ -35,14 +41,19 @@ class Currency
     {   
 
         $json_data = file_get_contents(__DIR__.'/currencymap.json');
-        $this->map = json_decode($json_data, true);                
+        $this->map = json_decode($json_data, true);    
+        
+        
+        $key = strtolower($name);
 
-        if (array_key_exists($name, $this->map)) 
+        if (array_key_exists($key, $this->map)) 
         {
             $this->name = $name;
-            $this->symbol = $this->map[$name]['symbol_native'];
-            $this->decimals = $this->map[$name]['decimal_digits'];
-            $this->rounding = $this->map[$name]['rounding'];            
+            $this->symbol = $this->map[$key]['symbol'];
+            $this->multiplier = $this->map[$key]['subunit_to_unit'];
+            $this->decimals = $this->map[$key]['decimal_mark'];
+            $this->thousands = $this->map[$key]['thousands_separator']; 
+            $this->symbolFirst = $this->map[$key]['symbol_first'];
         }
         else
         {
@@ -85,18 +96,35 @@ class Currency
     }
     
     /**
-     * @return int
+     * @return string
      */
     public function getDecimals()
     {        
         return $this->decimals;
     }
     
+    
+     /**
+     * @return string
+     */
+    public function getThousands()
+    {        
+        return $this->thousands;
+    }
+    
     /**
      * @return float
      */
-    public function getRounding()
+    public function getMultiplier()
     {        
-        return $this->rounding;
+        return $this->multiplier;
+    }
+    
+    /**
+     * @return bool
+     */
+    public function hasSymbolFirst()
+    {        
+        return $this->symbolFirst;
     }
 }
