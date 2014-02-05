@@ -273,4 +273,31 @@ class Money
 
         return (int) $units;
     }
+    
+    // TODO: remove separators from method parameters, move them to the currency map
+    /**
+     * Extracts a formatted money string.
+     * @example echo Money::USD(500)->formattedString();
+     * @param string $decimal_separator 
+     * @param string $thousand_separator
+     * @return string
+     */
+    public function formattedString($decimal_separator = '.', $thousand_separator = ',')
+    {
+        $decimals = $this->currency->getDecimals();
+        $number = $this->getAmount()/(10^$decimals);
+        $output = '';
+        
+        if($number < 0)
+        {
+            $output .= '-';
+            $number = -$number;            
+        }
+      
+        $output .= $this->currency->getSymbol() . ' ';
+        $output .= number_format($number, $decimals, $decimal_separator, $thousand_separator);
+        return $output;
+    }
+    
+    
 }
