@@ -14,24 +14,40 @@ class Currency
 {
     /** @var string */
     private $name;
-
+    
     /** @var array */
-    private static $currencies;
+    private $map;
+    
+    /** @var string */
+    private $symbol;
+    
+    /** @var int */
+    private $decimals;
+    
+    /** @var float */
+    private $rounding;
 
     /**
      * @param string $name
      * @throws UnknownCurrencyException
      */
     public function __construct($name)
-    {
-        if(!isset(static::$currencies)) {
-           static::$currencies = require __DIR__.'/currencies.php';
-        }
+    {   
 
-        if (!array_key_exists($name, static::$currencies)) {
-            throw new UnknownCurrencyException($name);
+        $json_data = file_get_contents(__DIR__.'/currencymap.json');
+        $this->map = json_decode($json_data, true);                
+
+        if (array_key_exists($name, $this->map)) 
+        {
+            $this->name = $name;
+            $this->symbol = $this->map[$name]['symbol_native'];
+            $this->decimals = $this->map[$name]['decimal_digits'];
+            $this->rounding = $this->map[$name]['rounding'];            
         }
-        $this->name = $name;
+        else
+        {
+            throw new UnknownCurrencyException($name);
+        }        
     }
 
 
@@ -58,5 +74,29 @@ class Currency
     public function __toString()
     {
         return $this->getName();
+    }
+    
+    /**
+     * @return string
+     */
+    public function getSymbol()
+    {        
+        return $this->symbol;
+    }
+    
+    /**
+     * @return int
+     */
+    public function getDecimals()
+    {        
+        return $this->decimals;
+    }
+    
+    /**
+     * @return float
+     */
+    public function getRounding()
+    {        
+        return $this->rounding;
     }
 }
