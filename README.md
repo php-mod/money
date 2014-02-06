@@ -1,7 +1,9 @@
 Money
 =====
 
-Fork from [Mathias Verraes implementation of Fowley's money pattern][https://github.com/mathiasverraes/money].
+Fork from [Mathias Verraes implementation of Fowley's money pattern](https://github.com/mathiasverraes/money).
+
+The current version of the fork divverges from Fowley's pattern by using floats as parameters on the Money constructor. This was introduced in order to cater to the issue of large monetary entities overflowing PHP int size on 32 bits platforms. This will be dealt with on later releases of this fork, so expect API breakage on minor releases.
 
 PHP 5.3+ library to make working with money safer, easier, and fun!
 
@@ -15,7 +17,7 @@ you need to represent money, use this Money value object.
 
 use Money\Money;
 
-$fiveEur = Money::EUR(500);
+$fiveEur = Money::EUR(5);
 $tenEur = $fiveEur->add($fiveEur);
 
 list($part1, $part2, $part3) = $tenEur->allocate(array(1, 1, 1));
@@ -50,19 +52,21 @@ $ composer.phar install
 
 Added Features
 --------------
-This fork replaces the maping of currencies from a simple ISO 4217 map from openexchangerates.org with the data contained in [Ruby's Money][https://github.com/RubyMoney] mapping. This allows for a few additional features, including generating formatted output string for the Money objects.
+This fork replaces the maping of currencies from a simple ISO 4217 map from openexchangerates.org with the data contained in [Ruby's Money](https://github.com/RubyMoney) mapping. This allows for a few additional features, including generating formatted output string for the Money objects.
+Also, the Money object constructor takes a float parameter, using it as the amount instead of units. This will be changed on later releases.
 
 ```php
 <?php
 
 use Money\Money;
 
-echo Money::EUR(500)->formattedString();
+echo Money::EUR(5.32)->formattedString();
 ```
 
 Output:
 ```
-
+€ 5.32
+```
 
 
 Integration
