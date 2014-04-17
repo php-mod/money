@@ -37,9 +37,8 @@ Install the library using [composer][1]. Add the following to your `composer.jso
 ```json
 {
     "require": {
-        "hemeragestao/money": "dev-master"
-    },
-    "minimum-stability": "dev"    
+        "hemeragestao/money": "2.0.*"
+    } 
 }
 ```
 
