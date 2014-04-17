@@ -18,7 +18,7 @@ class Money
     const ROUND_HALF_ODD = PHP_ROUND_HALF_ODD;
 
     /**
-     * @var int
+     * @var float
      */
     private $amount;
 
@@ -27,14 +27,14 @@ class Money
 
     /**
      * Create a Money instance
-     * @param  integer $amount    Amount, expressed in the smallest units of $currency (eg cents)
+     * @param  float $amount    Amount
      * @param  \Money\Currency $currency
      * @throws \Money\InvalidArgumentException
      */
     public function __construct($amount, Currency $currency)
     {
-        if (!is_int($amount)) {
-            throw new InvalidArgumentException("The first parameter of Money must be an integer. It's the amount, expressed in the smallest units of currency (eg cents)");
+        if (!is_float($amount)) {
+            throw new InvalidArgumentException("The first parameter of Money must be a float.");
         }
         $this->amount = $amount;
         $this->currency = $currency;
@@ -42,7 +42,7 @@ class Money
 
     /**
      * Convenience factory method for a Money object
-     * @example $fiveDollar = Money::USD(500);
+     * @example $fiveDollar = Money::USD(5);
      * @param string $method
      * @param array $arguments
      * @return \Money\Money
@@ -117,16 +117,18 @@ class Money
     }
 
     /**
-     * @deprecated Use getAmount() instead
+     * Returns the amount expressed in the smallest units of $currency (eg cents). 
+	 * Units are treated as integers, which might cause issues when operating with 
+	 * large numbers on 32 bit platforms
      * @return int
      */
     public function getUnits()
     {
-        return $this->amount;
+        return (int)($this->amount * $this->currency->getMultiplier());
     }
 
     /**
-     * @return int
+     * @return float
      */
     public function getAmount()
     {
@@ -193,7 +195,7 @@ class Money
         $this->assertOperand($multiplier);
         $this->assertRoundingMode($rounding_mode);
 
-        $product = (int) round($this->amount * $multiplier, 0, $rounding_mode);
+        $product = round($this->amount * $multiplier, 0, $rounding_mode);
 
         return new Money($product, $this->currency);
     }
@@ -208,7 +210,7 @@ class Money
         $this->assertOperand($divisor);
         $this->assertRoundingMode($rounding_mode);
 
-        $quotient = (int) round($this->amount / $divisor, 0, $rounding_mode);
+        $quotient = round($this->amount / $divisor, 0, $rounding_mode);
 
         return new Money($quotient, $this->currency);
     }
@@ -225,7 +227,7 @@ class Money
         $total = array_sum($ratios);
 
         foreach ($ratios as $ratio) {
-            $share = (int) floor($this->amount * $ratio / $total);
+            $share = floor($this->amount * $ratio / $total);
             $results[] = new Money($share, $this->currency);
             $remainder -= $share;
         }
@@ -273,4 +275,42 @@ class Money
 
         return (int) $units;
     }
+    
+    /**
+     * Extracts a formatted money string.
+     * @example echo Money::USD(500)->formattedString();
+     * @return string
+     */
+    public function formattedString()
+    {
+        $decimal_separator = $this->currency->getDecimals();
+        $thousand_separator = $this->currency->getThousands();
+        $multiplier = $this->currency->getMultiplier();
+        $decimals = (int) log10($multiplier);        
+        $number = $this->getAmount()/$multiplier;
+        $value = '';
+        $prefix = '';
+        $suffix = '';        
+        
+        if($number < 0)
+        {
+            $prefix .= '-';
+            $number = -$number;            
+        }       
+        
+        $value .= number_format($number, $decimals, $decimal_separator, $thousand_separator);
+        
+        if($this->currency->hasSymbolFirst())
+        {
+             $prefix .= $this->currency->getSymbol();
+        }
+        else
+        {
+             $suffix .= $this->currency->getSymbol();
+        }    
+       
+        return $prefix . $value . $suffix;
+    }
+    
+    
 }

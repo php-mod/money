@@ -1,5 +1,5 @@
 {
-    "name": "mathiasverraes/money",
+    "name": "money/money",
     "description": "PHP implementation of Fowler's Money pattern",
     "type": "library",
     "keywords": [ "Money", "Value Object", "Generic Sub-domain" ],
@@ -9,6 +9,14 @@
         {
             "name": "Mathias Verraes",
             "email": "mathias@verraes.net"
+        },
+        {
+            "name": "Gustavo Santos",
+            "email": "gustavo.santos@hgestao.com.br"
+        },
+        {
+            "name": "Hassan Amouhzi",
+            "email": "hassan@amouhzi.com"
         }
     ],
     "require": {
@@ -19,7 +27,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.3.x-dev"
+            "dev-master": "1.4.x-dev"
         }
     },
     "autoload": {

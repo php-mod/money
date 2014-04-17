@@ -14,24 +14,51 @@ class Currency
 {
     /** @var string */
     private $name;
-
+    
     /** @var array */
-    private static $currencies;
+    private $map;
+    
+    /** @var string */
+    private $symbol;
+    
+    /** @var float */
+    private $multiplier;
+    
+     /** @var string */
+    private $decimals;
+    
+     /** @var string */
+    private $thousands;
+    
+     /** @var bool */
+    private $symbolFirst;
 
     /**
      * @param string $name
      * @throws UnknownCurrencyException
      */
     public function __construct($name)
-    {
-        if(!isset(static::$currencies)) {
-           static::$currencies = require __DIR__.'/currencies.php';
-        }
+    {   
 
-        if (!array_key_exists($name, static::$currencies)) {
-            throw new UnknownCurrencyException($name);
+        $json_data = file_get_contents(__DIR__.'/currencymap.json');
+        $this->map = json_decode($json_data, true);    
+        
+        
+        $key = strtolower($name);
+
+        if (array_key_exists($key, $this->map)) 
+        {
+            $this->name = $name;
+            $this->symbol = $this->map[$key]['symbol'];
+            $this->multiplier = $this->map[$key]['subunit_to_unit'];
+            $this->decimals = $this->map[$key]['decimal_mark'];
+            $this->thousands = $this->map[$key]['thousands_separator']; 
+            $this->symbolFirst = $this->map[$key]['symbol_first'];
         }
-        $this->name = $name;
+        else
+        {
+            throw new UnknownCurrencyException($name);
+        }        
     }
 
 
@@ -58,5 +85,46 @@ class Currency
     public function __toString()
     {
         return $this->getName();
+    }
+    
+    /**
+     * @return string
+     */
+    public function getSymbol()
+    {        
+        return $this->symbol;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getDecimals()
+    {        
+        return $this->decimals;
+    }
+    
+    
+     /**
+     * @return string
+     */
+    public function getThousands()
+    {        
+        return $this->thousands;
+    }
+    
+    /**
+     * @return float
+     */
+    public function getMultiplier()
+    {        
+        return $this->multiplier;
+    }
+    
+    /**
+     * @return bool
+     */
+    public function hasSymbolFirst()
+    {        
+        return $this->symbolFirst;
     }
 }
