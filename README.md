@@ -59,7 +59,7 @@ Also, the Money object constructor takes a float parameter, using it as the amou
 
 use Money\Money;
 
-echo Money::EUR(5.32)->formattedString();
+echo Money::EUR(5.32);
 ```
 
 Output:
