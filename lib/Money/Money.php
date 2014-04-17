@@ -120,11 +120,12 @@ class Money
      * Returns the amount expressed in the smallest units of $currency (eg cents). 
 	 * Units are treated as integers, which might cause issues when operating with 
 	 * large numbers on 32 bit platforms
+     * @deprecated Use getAmount() instead
      * @return int
      */
     public function getUnits()
     {
-        return (int)($this->amount * $this->currency->getMultiplier());
+        return $this->amount;
     }
 
     /**
@@ -145,7 +146,7 @@ class Money
 
     /**
      * @param \Money\Money $addend
-     *@return \Money\Money 
+     *@return \Money\Money
      */
     public function add(Money $addend)
     {
@@ -275,7 +276,22 @@ class Money
 
         return (int) $units;
     }
-    
+
+    public function format()
+    {
+        return '$' . number_format($this->getAmount() / 100, 2);
+    }
+
+    /**
+     * Convert into formatted amount (hardcoded to USD for the time being).
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return number_format($this->getAmount() / 100, 2);
+    }
+
     /**
      * Extracts a formatted money string.
      * @example echo Money::USD(500)->formattedString();
@@ -311,6 +327,19 @@ class Money
        
         return $prefix . $value . $suffix;
     }
-    
-    
+
+    public function format()
+    {
+        return '$' . number_format($this->getAmount() / 100, 2);
+    }
+
+    /**
+     * Convert into formatted amount (hardcoded to USD for the time being).
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return number_format($this->getAmount() / 100, 2);
+    }
 }
