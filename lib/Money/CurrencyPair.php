@@ -75,7 +75,7 @@ class CurrencyPair
         }
 
         // @todo add rounding mode?
-        return new Money((int) round($money->getAmount() * $this->ratio), $this->counterCurrency);
+        return new Money((float) round($money->getAmount() * $this->ratio), $this->counterCurrency);
     }
 
     /** @return \Money\Currency */

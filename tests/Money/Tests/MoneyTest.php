@@ -36,19 +36,11 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Money\InvalidArgumentException
-     */
-    public function testDecimalsThrowException()
-    {
-        $money = new Money(0.01, new Currency('EUR'));
-    }
-
-    /**
-     * @expectedException Money\InvalidArgumentException
+     * @expectedException \Money\InvalidArgumentException
      */
     public function testStringThrowsException()
     {
-        $money = new Money('100', new Currency('EUR'));
+        new Money('f100', new Currency('EUR'));
     }
 
     public function testEquality()
@@ -78,7 +70,7 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Money\InvalidArgumentException
+     * @expectedException \Money\InvalidArgumentException
      */
     public function testDifferentCurrenciesCannotBeAdded()
     {
@@ -102,7 +94,7 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Money\InvalidArgumentException
+     * @expectedException \Money\InvalidArgumentException
      */
     public function testDifferentCurrenciesCannotBeSubtracted()
     {
@@ -149,7 +141,7 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     {
         $euro1 = new Money(1, new Currency('EUR'));
         $euro2 = new Money(2, new Currency('EUR'));
-        $usd = new Money(1, new Currency('USD'));
+        // TODO $usd = new Money(1, new Currency('USD'));
 
         $this->assertTrue($euro2->greaterThan($euro1));
         $this->assertFalse($euro1->greaterThan($euro2));
@@ -162,7 +154,7 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Money\InvalidArgumentException
+     * @expectedException \Money\InvalidArgumentException
      */
     public function testDifferentCurrenciesCannotBeCompared()
     {

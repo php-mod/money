@@ -10,6 +10,12 @@
 
 namespace Money;
 
+/**
+ * Class Money
+ * @package Money
+ * @method static Money EUR(float $amount) Create a Money object with EUR currency.
+ * @method static Money USD(float $amount) Create a Money object with USD currency.
+ */
 class Money
 {
     const ROUND_HALF_UP = PHP_ROUND_HALF_UP;
@@ -27,14 +33,14 @@ class Money
 
     /**
      * Create a Money instance
-     * @param  float $amount    Amount
+     * @param  int|float $amount    Amount
      * @param  \Money\Currency $currency
      * @throws \Money\InvalidArgumentException
      */
     public function __construct($amount, Currency $currency)
     {
-        if (!is_float($amount)) {
-            throw new InvalidArgumentException("The first parameter of Money must be a float.");
+        if (!is_numeric($amount)) {
+            throw new InvalidArgumentException("The first parameter of Money must be numeric.");
         }
         $this->amount = $amount;
         $this->currency = $currency;
@@ -49,7 +55,7 @@ class Money
      */
     public static function __callStatic($method, $arguments)
     {
-        return new Money($arguments[0], new Currency($method));
+        return new Money((float) $arguments[0], new Currency($method));
     }
 
     /**
@@ -243,7 +249,7 @@ class Money
     /** @return bool */
     public function isZero()
     {
-        return $this->amount === 0;
+        return $this->amount == 0;
     }
 
     /** @return bool */
@@ -275,21 +281,6 @@ class Money
         $units .= isset($matches[5]) ? $matches[5] : "0";
 
         return (int) $units;
-    }
-
-    public function format()
-    {
-        return '$' . number_format($this->getAmount() / 100, 2);
-    }
-
-    /**
-     * Convert into formatted amount (hardcoded to USD for the time being).
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return number_format($this->getAmount() / 100, 2);
     }
 
     /**
@@ -328,11 +319,6 @@ class Money
         return $prefix . $value . $suffix;
     }
 
-    public function format()
-    {
-        return '$' . number_format($this->getAmount() / 100, 2);
-    }
-
     /**
      * Convert into formatted amount (hardcoded to USD for the time being).
      *
@@ -340,6 +326,6 @@ class Money
      */
     public function __toString()
     {
-        return number_format($this->getAmount() / 100, 2);
+        return $this->formattedString();
     }
 }
