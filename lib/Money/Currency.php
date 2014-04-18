@@ -15,9 +15,6 @@ class Currency
     /** @var string */
     private $name;
     
-    /** @var array */
-    private $map;
-    
     /** @var string */
     private $symbol;
     
@@ -38,29 +35,21 @@ class Currency
      * @throws UnknownCurrencyException
      */
     public function __construct($name)
-    {   
-
-        $json_data = file_get_contents(__DIR__.'/currencymap.json');
-        $this->map = json_decode($json_data, true);    
-        
-        
-        $key = strtolower($name);
-
-        if (array_key_exists($key, $this->map)) 
+    {
+        if ($map = CurrencyMap::get($name))
         {
             $this->name = $name;
-            $this->symbol = $this->map[$key]['symbol'];
-            $this->multiplier = $this->map[$key]['subunit_to_unit'];
-            $this->decimals = $this->map[$key]['decimal_mark'];
-            $this->thousands = $this->map[$key]['thousands_separator']; 
-            $this->symbolFirst = $this->map[$key]['symbol_first'];
+            $this->symbol = $map['symbol'];
+            $this->multiplier = $map['subunit_to_unit'];
+            $this->decimals = $map['decimal_mark'];
+            $this->thousands = $map['thousands_separator'];
+            $this->symbolFirst = $map['symbol_first'];
         }
         else
         {
             throw new UnknownCurrencyException($name);
         }        
     }
-
 
     /**
      * @return string
