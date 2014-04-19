@@ -15,6 +15,26 @@ use Money\Currency;
 
 class CurrencyTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Currency
+     */
+    protected $euro1;
+
+    /**
+     * @var Currency
+     */
+    protected $euro2;
+
+    /**
+     * @var Currency
+     */
+    protected $usd1;
+
+    /**
+     * @var Currency
+     */
+    protected $usd2;
+
     public function setUp()
     {
         $this->euro1 = new Currency('EUR');

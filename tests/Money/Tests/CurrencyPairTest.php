@@ -111,7 +111,7 @@ class CurrencyPairTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider provideEqualityComparisonPairs
      */
-    public function testEqualityComparisons($pair1, $pair2, $equal)
+    public function testEqualityComparisons(CurrencyPair $pair1, CurrencyPair $pair2, $equal)
     {
         $this->assertSame($equal, $pair1->equals($pair2));
     }

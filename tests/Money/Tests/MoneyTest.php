@@ -37,7 +37,7 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Money\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testStringThrowsException()
     {

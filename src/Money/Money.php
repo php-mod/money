@@ -182,16 +182,6 @@ class Money
     }
 
     /**
-     * @throws \Money\InvalidArgumentException
-     */
-    private function assertRoundingMode($rounding_mode)
-    {
-        if (!in_array($rounding_mode, array(self::ROUND_HALF_DOWN, self::ROUND_HALF_EVEN, self::ROUND_HALF_ODD, self::ROUND_HALF_UP))) {
-            throw new InvalidArgumentException('Rounding mode should be Money::ROUND_HALF_DOWN | Money::ROUND_HALF_EVEN | Money::ROUND_HALF_ODD | Money::ROUND_HALF_UP');
-        }
-    }
-
-    /**
      * @param $multiplier
      * @param int|\Money\RoundingMode $rounding_mode
      * @return Money
