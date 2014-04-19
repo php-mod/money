@@ -228,4 +228,18 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals($units, Money::stringToUnits($string));
     }
+
+    /**
+     * @dataProvider provideExamples
+     */
+    public function testToString($expected, $cur, $amount, $message) {
+
+        $this->assertEquals($expected, (string) Money::$cur($amount), $message);
+    }
+
+    public function provideExamples() {
+        return array(
+            array('€ 48.25', 'EUR', 48.25, 'Example: ' . __LINE__)
+        );
+    }
 }
