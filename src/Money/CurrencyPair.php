@@ -69,8 +69,8 @@ class CurrencyPair
     /**
      * @param \Money\Money $money
      * @param              $rounding_mode
-     * @return \Money\Money
      * @throws InvalidArgumentException
+     * @return \Money\Money
      */
     public function convert(Money $money, RoundingMode $rounding_mode = null)
     {

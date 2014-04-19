@@ -14,9 +14,21 @@ class Currency
 {
     /** @var string */
     private $name;
-
-    /** @var array */
-    private static $currencies;
+    
+    /** @var string */
+    private $symbol;
+    
+    /** @var float */
+    private $multiplier;
+    
+     /** @var string */
+    private $decimals;
+    
+     /** @var string */
+    private $thousands;
+    
+     /** @var bool */
+    private $symbolFirst;
 
     /**
      * @param string $name
@@ -24,16 +36,20 @@ class Currency
      */
     public function __construct($name)
     {
-        if(!isset(static::$currencies)) {
-           static::$currencies = require __DIR__.'/currencies.php';
+        if ($map = CurrencyMap::get($name))
+        {
+            $this->name = $name;
+            $this->symbol = $map['symbol'];
+            $this->multiplier = $map['subunit_to_unit'];
+            $this->decimals = $map['decimal_mark'];
+            $this->thousands = $map['thousands_separator'];
+            $this->symbolFirst = $map['symbol_first'];
         }
-
-        if (!array_key_exists($name, static::$currencies)) {
+        else
+        {
             throw new UnknownCurrencyException($name);
-        }
-        $this->name = $name;
+        }        
     }
-
 
     /**
      * @return string
@@ -58,5 +74,46 @@ class Currency
     public function __toString()
     {
         return $this->getName();
+    }
+    
+    /**
+     * @return string
+     */
+    public function getSymbol()
+    {        
+        return $this->symbol;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getDecimals()
+    {        
+        return $this->decimals;
+    }
+    
+    
+     /**
+     * @return string
+     */
+    public function getThousands()
+    {        
+        return $this->thousands;
+    }
+    
+    /**
+     * @return float
+     */
+    public function getMultiplier()
+    {        
+        return $this->multiplier;
+    }
+    
+    /**
+     * @return bool
+     */
+    public function hasSymbolFirst()
+    {        
+        return $this->symbolFirst;
     }
 }

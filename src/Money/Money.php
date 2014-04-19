@@ -12,6 +12,12 @@ namespace Money;
 
 use InvalidArgumentException;
 
+/**
+ * Class Money
+ * @package Money
+ * @method static Money EUR(float $amount) Create a Money object with EUR currency.
+ * @method static Money USD(float $amount) Create a Money object with USD currency.
+ */
 class Money
 {
     const ROUND_HALF_UP = PHP_ROUND_HALF_UP;
@@ -20,7 +26,7 @@ class Money
     const ROUND_HALF_ODD = PHP_ROUND_HALF_ODD;
 
     /**
-     * @var int
+     * @var float
      */
     private $amount;
 
@@ -29,14 +35,14 @@ class Money
 
     /**
      * Create a Money instance
-     * @param  integer $amount    Amount, expressed in the smallest units of $currency (eg cents)
+     * @param  int|float $amount    Amount
      * @param  Currency $currency
      * @throws InvalidArgumentException
      */
     public function __construct($amount, Currency $currency)
     {
-        if (!is_int($amount)) {
-            throw new InvalidArgumentException("The first parameter of Money must be an integer. It's the amount, expressed in the smallest units of currency (eg cents)");
+        if (!is_numeric($amount)) {
+            throw new InvalidArgumentException("The first parameter of Money must be numeric.");
         }
         $this->amount = $amount;
         $this->currency = $currency;
@@ -44,7 +50,7 @@ class Money
 
     /**
      * Convenience factory method for a Money object
-     * @example $fiveDollar = Money::USD(500);
+     * @example $fiveDollar = Money::USD(5);
      * @param string $method
      * @param array $arguments
      * @return Money
@@ -128,7 +134,7 @@ class Money
     }
 
     /**
-     * @return int
+     * @return float
      */
     public function getAmount()
     {
@@ -172,6 +178,16 @@ class Money
     {
         if (!is_int($operand) && !is_float($operand)) {
             throw new InvalidArgumentException('Operand should be an integer or a float');
+        }
+    }
+
+    /**
+     * @throws \Money\InvalidArgumentException
+     */
+    private function assertRoundingMode($rounding_mode)
+    {
+        if (!in_array($rounding_mode, array(self::ROUND_HALF_DOWN, self::ROUND_HALF_EVEN, self::ROUND_HALF_ODD, self::ROUND_HALF_UP))) {
+            throw new InvalidArgumentException('Rounding mode should be Money::ROUND_HALF_DOWN | Money::ROUND_HALF_EVEN | Money::ROUND_HALF_ODD | Money::ROUND_HALF_UP');
         }
     }
 
@@ -238,7 +254,7 @@ class Money
     /** @return bool */
     public function isZero()
     {
-        return $this->amount === 0;
+        return $this->amount == 0;
     }
 
     /** @return bool */
@@ -270,5 +286,51 @@ class Money
         $units .= isset($matches[5]) ? $matches[5] : "0";
 
         return (int) $units;
+    }
+
+    /**
+     * Extracts a formatted money string.
+     * @example echo Money::USD(500)->formattedString();
+     * @return string
+     */
+    public function formattedString()
+    {
+        $decimal_separator = $this->currency->getDecimals();
+        $thousand_separator = $this->currency->getThousands();
+        $multiplier = $this->currency->getMultiplier();
+        $decimals = (int) log10($multiplier);        
+        $number = $this->getAmount()/$multiplier;
+        $value = '';
+        $prefix = '';
+        $suffix = '';        
+        
+        if($number < 0)
+        {
+            $prefix .= '-';
+            $number = -$number;            
+        }       
+        
+        $value .= number_format($number, $decimals, $decimal_separator, $thousand_separator);
+        
+        if($this->currency->hasSymbolFirst())
+        {
+             $prefix .= $this->currency->getSymbol();
+        }
+        else
+        {
+             $suffix .= $this->currency->getSymbol();
+        }    
+       
+        return $prefix . $value . $suffix;
+    }
+
+    /**
+     * Convert into formatted amount (hardcoded to USD for the time being).
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->formattedString();
     }
 }

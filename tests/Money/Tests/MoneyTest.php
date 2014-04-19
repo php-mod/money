@@ -37,19 +37,11 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testDecimalsThrowException()
-    {
-        $money = new Money(0.01, new Currency('EUR'));
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \Money\InvalidArgumentException
      */
     public function testStringThrowsException()
     {
-        $money = new Money('100', new Currency('EUR'));
+        new Money('f100', new Currency('EUR'));
     }
 
     public function testEquality()
@@ -236,5 +228,19 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     public function testStringToUnits($string, $units)
     {
         $this->assertEquals($units, Money::stringToUnits($string));
+    }
+
+    /**
+     * @dataProvider provideExamples
+     */
+    public function testToString($expected, $cur, $amount, $message) {
+
+        $this->assertEquals($expected, (string) Money::$cur($amount), $message);
+    }
+
+    public function provideExamples() {
+        return array(
+            array('€ 48.25', 'EUR', 48.25, 'Example: ' . __LINE__)
+        );
     }
 }
