@@ -12,22 +12,29 @@ namespace Money;
 
 class Currency
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $name;
-    
-    /** @var string */
+
+    /**
+     * @var string
+     */
     private $symbol;
-    
-    /** @var float */
-    private $multiplier;
-    
-     /** @var string */
+
+    /**
+     * var string
+     */
     private $decimals;
-    
-     /** @var string */
+
+    /**
+     * var string
+     */
     private $thousands;
-    
-     /** @var bool */
+
+    /**
+     * var bool
+     */
     private $symbolFirst;
 
     /**
@@ -36,27 +43,15 @@ class Currency
      */
     public function __construct($name)
     {
-        if ($map = CurrencyMap::get($name))
-        {
+        if ($map = CurrencyMap::get($name)) {
             $this->name = $name;
             $this->symbol = $map['symbol'];
-            $this->multiplier = $map['subunit_to_unit'];
             $this->decimals = $map['decimal_mark'];
             $this->thousands = $map['thousands_separator'];
             $this->symbolFirst = $map['symbol_first'];
-        }
-        else
-        {
+        } else {
             throw new UnknownCurrencyException($name);
-        }        
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
+        }
     }
 
     /**
@@ -75,45 +70,44 @@ class Currency
     {
         return $this->getName();
     }
-    
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
     /**
      * @return string
      */
     public function getSymbol()
-    {        
+    {
         return $this->symbol;
     }
-    
+
     /**
      * @return string
      */
     public function getDecimals()
-    {        
+    {
         return $this->decimals;
     }
-    
-    
-     /**
+
+    /**
      * @return string
      */
     public function getThousands()
-    {        
+    {
         return $this->thousands;
     }
-    
-    /**
-     * @return float
-     */
-    public function getMultiplier()
-    {        
-        return $this->multiplier;
-    }
-    
+
     /**
      * @return bool
      */
     public function hasSymbolFirst()
-    {        
+    {
         return $this->symbolFirst;
     }
 }

@@ -10,6 +10,6 @@
 
 namespace Money;
 
-class UnknownCurrencyException extends \Exception implements Exception
+class UnknownCurrencyException extends \Exception
 {
 }

@@ -12,16 +12,24 @@ namespace Money;
 
 use InvalidArgumentException;
 
-/** @see http://en.wikipedia.org/wiki/Currency_pair */
+/**
+ * @see http://en.wikipedia.org/wiki/Currency_pair
+ */
 class CurrencyPair
 {
-    /** @var Currency */
+    /**
+     * @var Currency
+     */
     private $baseCurrency;
 
-    /** @var Currency */
+    /**
+     * @var Currency
+     */
     private $counterCurrency;
 
-    /** @var float */
+    /**
+     * @var float
+     */
     private $ratio;
 
     /**
@@ -32,13 +40,13 @@ class CurrencyPair
      */
     public function __construct(Currency $baseCurrency, Currency $counterCurrency, $ratio)
     {
-        if(!is_numeric($ratio)) {
+        if (!is_numeric($ratio)) {
             throw new InvalidArgumentException("Ratio must be numeric");
         }
 
         $this->counterCurrency = $counterCurrency;
         $this->baseCurrency = $baseCurrency;
-        $this->ratio = (float) $ratio;
+        $this->ratio = (float)$ratio;
     }
 
     /**
@@ -49,8 +57,9 @@ class CurrencyPair
     public static function createFromIso($iso)
     {
         $currency = "([A-Z]{2,3})";
-        $ratio = "([0-9]*\.?[0-9]+)"; // @see http://www.regular-expressions.info/floatingpoint.html
-        $pattern = '#'.$currency.'/'.$currency.' '.$ratio.'#';
+        // @see http://www.regular-expressions.info/floatingpoint.html
+        $ratio = '([0-9]*\.?[0-9]+)';
+        $pattern = '#' . $currency . '/' . $currency . ' ' . $ratio . '#';
 
         $matches = array();
         if (!preg_match($pattern, $iso, $matches)) {
@@ -77,27 +86,33 @@ class CurrencyPair
             throw new InvalidArgumentException("The Money has the wrong currency");
         }
 
-        $rounding_mode = $rounding_mode ?: RoundingMode::halfUp();
-        
+        $rounding_mode = $rounding_mode ? : RoundingMode::halfUp();
+
         return new Money(
-            (int) round($money->getAmount() * $this->ratio, 0, $rounding_mode->getRoundingMode()),
+            (int)round($money->getAmount() * $this->ratio, 0, $rounding_mode->getRoundingMode()),
             $this->counterCurrency
         );
     }
 
-    /** @return Currency */
+    /**
+     * @return Currency
+     */
     public function getCounterCurrency()
     {
         return $this->counterCurrency;
     }
 
-    /** @return Currency */
+    /**
+     * @return Currency
+     */
     public function getBaseCurrency()
     {
         return $this->baseCurrency;
     }
 
-    /** @return float */
+    /**
+     * @return float
+     */
     public function getRatio()
     {
         return $this->ratio;
@@ -112,7 +127,6 @@ class CurrencyPair
         return
             $this->baseCurrency->equals($other->baseCurrency)
             && $this->counterCurrency->equals($other->counterCurrency)
-            && $this->ratio === $other->ratio
-        ;
+            && $this->ratio === $other->ratio;
     }
 }

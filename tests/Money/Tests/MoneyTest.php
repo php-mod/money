@@ -11,12 +11,33 @@
 namespace Money\Tests;
 
 use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
-use Money\Money;
 use Money\Currency;
+use Money\Money;
+use PHPUnit_Framework_TestCase;
 
 class MoneyTest extends PHPUnit_Framework_TestCase
 {
+    public static function provideStrings()
+    {
+        return array(
+            array("1000", 100000),
+            array("1000.0", 100000),
+            array("1000.00", 100000),
+            array("0.01", 1),
+            array("1", 100),
+            array("-1000", -100000),
+            array("-1000.0", -100000),
+            array("-1000.00", -100000),
+            array("-0.01", -1),
+            array("-1", -100),
+            array("+1000", 100000),
+            array("+1000.0", 100000),
+            array("+1000.00", 100000),
+            array("+0.01", 1),
+            array("+1", 100)
+        );
+    }
+
     public function testFactoryMethods()
     {
         $this->assertEquals(
@@ -201,27 +222,6 @@ class MoneyTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(Money::EUR(-1)->isPositive());
     }
 
-    public static function provideStrings()
-    {
-        return array(
-            array("1000", 100000),
-            array("1000.0", 100000),
-            array("1000.00", 100000),
-            array("0.01", 1),
-            array("1", 100),
-            array("-1000", -100000),
-            array("-1000.0", -100000),
-            array("-1000.00", -100000),
-            array("-0.01", -1),
-            array("-1", -100),
-            array("+1000", 100000),
-            array("+1000.0", 100000),
-            array("+1000.00", 100000),
-            array("+0.01", 1),
-            array("+1", 100)
-        );
-    }
-
     /**
      * @dataProvider provideStrings
      */
@@ -233,14 +233,16 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider provideExamples
      */
-    public function testToString($expected, $cur, $amount, $message) {
-
-        $this->assertEquals($expected, (string) Money::$cur($amount), $message);
+    public function testToString($expected, $cur, $amount, $message)
+    {
+        $this->assertEquals($expected, (string)Money::$cur($amount), $message);
     }
 
-    public function provideExamples() {
+    public function provideExamples()
+    {
         return array(
-            array('€ 48.25', 'EUR', 48.25, 'Example: ' . __LINE__)
+            array('€ 48,25', 'EUR', 48.25, 'Example: ' . __LINE__),
+            array('€ 154.848,26', 'EUR', 154848.25895, 'Example: ' . __LINE__)
         );
     }
 }

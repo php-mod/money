@@ -35,7 +35,7 @@ class Money
 
     /**
      * Create a Money instance
-     * @param  int|float $amount    Amount
+     * @param  int|float $amount Amount
      * @param  Currency $currency
      * @throws InvalidArgumentException
      */
@@ -61,22 +61,22 @@ class Money
     }
 
     /**
-     * @param Money $other
-     * @return bool
-     */
-    public function isSameCurrency(Money $other)
-    {
-        return $this->currency->equals($other->currency);
-    }
-
-    /**
+     * @param $string
      * @throws InvalidArgumentException
+     * @return int
      */
-    private function assertSameCurrency(Money $other)
+    public static function stringToUnits($string)
     {
-        if (!$this->isSameCurrency($other)) {
-            throw new InvalidArgumentException('Different currencies');
+        //@todo extend the regular expression with grouping characters and eventually currencies
+        if (!preg_match('/(-)?(\d+)([.,])?(\d)?(\d)?/', $string, $matches)) {
+            throw new InvalidArgumentException("The value could not be parsed as money");
         }
+        $units = $matches[1] == "-" ? "-" : "";
+        $units .= $matches[2];
+        $units .= isset($matches[4]) ? $matches[4] : "0";
+        $units .= isset($matches[5]) ? $matches[5] : "0";
+
+        return (int)$units;
     }
 
     /**
@@ -88,6 +88,24 @@ class Money
         return
             $this->isSameCurrency($other)
             && $this->amount == $other->amount;
+    }
+
+    /**
+     * @param Money $other
+     * @return bool
+     */
+    public function isSameCurrency(Money $other)
+    {
+        return $this->currency->equals($other->currency);
+    }
+
+    /**
+     * @param Money $other
+     * @return bool
+     */
+    public function greaterThan(Money $other)
+    {
+        return 1 == $this->compare($other);
     }
 
     /**
@@ -107,12 +125,13 @@ class Money
     }
 
     /**
-     * @param Money $other
-     * @return bool
+     * @throws InvalidArgumentException
      */
-    public function greaterThan(Money $other)
+    private function assertSameCurrency(Money $other)
     {
-        return 1 == $this->compare($other);
+        if (!$this->isSameCurrency($other)) {
+            throw new InvalidArgumentException('Different currencies');
+        }
     }
 
     /**
@@ -134,14 +153,6 @@ class Money
     }
 
     /**
-     * @return float
-     */
-    public function getAmount()
-    {
-        return $this->amount;
-    }
-
-    /**
      * @return Currency
      */
     public function getCurrency()
@@ -151,7 +162,7 @@ class Money
 
     /**
      * @param Money $addend
-     *@return Money
+     * @return Money
      */
     public function add(Money $addend)
     {
@@ -172,16 +183,6 @@ class Money
     }
 
     /**
-     * @throws InvalidArgumentException
-     */
-    private function assertOperand($operand)
-    {
-        if (!is_int($operand) && !is_float($operand)) {
-            throw new InvalidArgumentException('Operand should be an integer or a float');
-        }
-    }
-
-    /**
      * @param $multiplier
      * @param int|\Money\RoundingMode $rounding_mode
      * @return Money
@@ -189,14 +190,24 @@ class Money
     public function multiply($multiplier, $rounding_mode = self::ROUND_HALF_UP)
     {
         $this->assertOperand($multiplier);
-        
+
         if (!$rounding_mode instanceof RoundingMode) {
             $rounding_mode = new RoundingMode($rounding_mode);
         }
 
-        $product = (int) round($this->amount * $multiplier, 0, $rounding_mode->getRoundingMode());
+        $product = (int)round($this->amount * $multiplier, 0, $rounding_mode->getRoundingMode());
 
         return new Money($product, $this->currency);
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    private function assertOperand($operand)
+    {
+        if (!is_int($operand) && !is_float($operand)) {
+            throw new InvalidArgumentException('Operand should be an integer or a float');
+        }
     }
 
     /**
@@ -212,7 +223,7 @@ class Money
             $rounding_mode = new RoundingMode($rounding_mode);
         }
 
-        $quotient = (int) round($this->amount / $divisor, 0, $rounding_mode->getRoundingMode());
+        $quotient = (int)round($this->amount / $divisor, 0, $rounding_mode->getRoundingMode());
 
         return new Money($quotient, $this->currency);
     }
@@ -229,7 +240,7 @@ class Money
         $total = array_sum($ratios);
 
         foreach ($ratios as $ratio) {
-            $share = (int) floor($this->amount * $ratio / $total);
+            $share = (int)floor($this->amount * $ratio / $total);
             $results[] = new Money($share, $this->currency);
             $remainder -= $share;
         }
@@ -260,22 +271,13 @@ class Money
     }
 
     /**
-     * @param $string
-     * @throws InvalidArgumentException
-     * @return int
+     * Convert into formatted amount (hardcoded to USD for the time being).
+     *
+     * @return string
      */
-    public static function stringToUnits($string)
+    public function __toString()
     {
-        //@todo extend the regular expression with grouping characters and eventually currencies
-        if (!preg_match("/(-)?(\d+)([.,])?(\d)?(\d)?/", $string, $matches)) {
-            throw new InvalidArgumentException("The value could not be parsed as money");
-        }
-        $units = $matches[1] == "-" ? "-" : "";
-        $units .= $matches[2];
-        $units .= isset($matches[4]) ? $matches[4] : "0";
-        $units .= isset($matches[5]) ? $matches[5] : "0";
-
-        return (int) $units;
+        return $this->formattedString();
     }
 
     /**
@@ -287,40 +289,34 @@ class Money
     {
         $decimal_separator = $this->currency->getDecimals();
         $thousand_separator = $this->currency->getThousands();
-        $multiplier = $this->currency->getMultiplier();
-        $decimals = (int) log10($multiplier);        
-        $number = $this->getAmount()/$multiplier;
+        // TODO decimals depends on currency.
+        $decimals = 2;
+        $number = $this->getAmount();
         $value = '';
         $prefix = '';
-        $suffix = '';        
-        
-        if($number < 0)
-        {
+        $suffix = '';
+
+        if ($number < 0) {
             $prefix .= '-';
-            $number = -$number;            
-        }       
-        
-        $value .= number_format($number, $decimals, $decimal_separator, $thousand_separator);
-        
-        if($this->currency->hasSymbolFirst())
-        {
-             $prefix .= $this->currency->getSymbol();
+            $number = -$number;
         }
-        else
-        {
-             $suffix .= $this->currency->getSymbol();
-        }    
-       
+
+        $value .= number_format($number, $decimals, $decimal_separator, $thousand_separator);
+
+        if ($this->currency->hasSymbolFirst()) {
+            $prefix .= $this->currency->getSymbol() . ' ';
+        } else {
+            $suffix .= $this->currency->getSymbol();
+        }
+
         return $prefix . $value . $suffix;
     }
 
     /**
-     * Convert into formatted amount (hardcoded to USD for the time being).
-     *
-     * @return string
+     * @return float
      */
-    public function __toString()
+    public function getAmount()
     {
-        return $this->formattedString();
+        return $this->amount;
     }
 }
