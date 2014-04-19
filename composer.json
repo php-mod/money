@@ -2,13 +2,14 @@
     "name": "money/money",
     "description": "PHP implementation of Fowler's Money pattern",
     "type": "library",
-    "keywords": [ "Money", "Value Object", "Generic Sub-domain" ],
+    "keywords": [ "Money", "Value Object", "Generic Sub-domain", "domain-driven design", "DDD" ],
     "homepage": "http://verraes.net/2011/04/fowler-money-pattern-in-php/",
     "license": "MIT",
     "authors": [
         {
             "name": "Mathias Verraes",
-            "email": "mathias@verraes.net"
+            "email": "mathias@verraes.net",
+            "homepage": "http://verraes.net"
         },
         {
             "name": "Gustavo Santos",
@@ -31,12 +32,12 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.4.x-dev"
+            "dev-master": "2.0.x-dev"
         }
     },
     "autoload": {
         "psr-0": {
-            "Money": "lib"
+            "Money": "src"
         }
     },
 

@@ -2,7 +2,7 @@
 /**
  * This file is part of the Money library
  *
- * Copyright (c) 2011-2013 Mathias Verraes
+ * Copyright (c) 2011-2014 Mathias Verraes
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,12 +10,34 @@
 
 namespace Money\Tests;
 
-use PHPUnit_Framework_TestCase;
-use Money\Money;
+use InvalidArgumentException;
 use Money\Currency;
+use Money\Money;
+use PHPUnit_Framework_TestCase;
 
 class MoneyTest extends PHPUnit_Framework_TestCase
 {
+    public static function provideStrings()
+    {
+        return array(
+            array("1000", 100000),
+            array("1000.0", 100000),
+            array("1000.00", 100000),
+            array("0.01", 1),
+            array("1", 100),
+            array("-1000", -100000),
+            array("-1000.0", -100000),
+            array("-1000.00", -100000),
+            array("-0.01", -1),
+            array("-1", -100),
+            array("+1000", 100000),
+            array("+1000.0", 100000),
+            array("+1000.00", 100000),
+            array("+0.01", 1),
+            array("+1", 100)
+        );
+    }
+
     public function testFactoryMethods()
     {
         $this->assertEquals(
@@ -36,7 +58,7 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Money\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testStringThrowsException()
     {
@@ -70,7 +92,7 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Money\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testDifferentCurrenciesCannotBeAdded()
     {
@@ -94,7 +116,7 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Money\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testDifferentCurrenciesCannotBeSubtracted()
     {
@@ -141,7 +163,7 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     {
         $euro1 = new Money(1, new Currency('EUR'));
         $euro2 = new Money(2, new Currency('EUR'));
-        // TODO $usd = new Money(1, new Currency('USD'));
+        $usd = new Money(1, new Currency('USD'));
 
         $this->assertTrue($euro2->greaterThan($euro1));
         $this->assertFalse($euro1->greaterThan($euro2));
@@ -154,7 +176,7 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Money\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testDifferentCurrenciesCannotBeCompared()
     {
@@ -200,32 +222,27 @@ class MoneyTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(Money::EUR(-1)->isPositive());
     }
 
-    public static function provideStrings()
-    {
-        return array(
-            array("1000", 100000),
-            array("1000.0", 100000),
-            array("1000.00", 100000),
-            array("0.01", 1),
-            array("1", 100),
-            array("-1000", -100000),
-            array("-1000.0", -100000),
-            array("-1000.00", -100000),
-            array("-0.01", -1),
-            array("-1", -100),
-            array("+1000", 100000),
-            array("+1000.0", 100000),
-            array("+1000.00", 100000),
-            array("+0.01", 1),
-            array("+1", 100)
-        );
-    }
-
     /**
      * @dataProvider provideStrings
      */
     public function testStringToUnits($string, $units)
     {
         $this->assertEquals($units, Money::stringToUnits($string));
+    }
+
+    /**
+     * @dataProvider provideExamples
+     */
+    public function testToString($expected, $cur, $amount, $message)
+    {
+        $this->assertEquals($expected, (string)Money::$cur($amount), $message);
+    }
+
+    public function provideExamples()
+    {
+        return array(
+            array('€ 48,25', 'EUR', 48.25, 'Example: ' . __LINE__),
+            array('€ 154.848,26', 'EUR', 154848.25895, 'Example: ' . __LINE__)
+        );
     }
 }

@@ -2,7 +2,7 @@
 /**
  * This file is part of the Money library
  *
- * Copyright (c) 2011-2013 Mathias Verraes
+ * Copyright (c) 2011-2014 Mathias Verraes
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,6 +10,8 @@
 
 namespace Money\Tests;
 
+use InvalidArgumentException;
+use Money\RoundingMode;
 use PHPUnit_Framework_TestCase;
 use Money\Money;
 use Money\Currency;
@@ -30,6 +32,20 @@ class CurrencyPairTest extends PHPUnit_Framework_TestCase
         $eur = $pair->convert($usd);
         $this->assertEquals(Money::EUR(100), $eur);
     }
+    
+    /** @test */
+    public function ConvertsEurToUsdWithModes()
+    {
+        $eur = Money::EUR(10);
+
+        $pair = new CurrencyPair(new Currency('EUR'), new Currency('USD'), 1.2500);
+        $usd = $pair->convert($eur);
+        $this->assertEquals(Money::USD(13), $usd);
+
+        $pair = new CurrencyPair(new Currency('EUR'), new Currency('USD'), 1.2500);
+        $usd = $pair->convert($eur, new RoundingMode(RoundingMode::ROUND_HALF_DOWN));
+        $this->assertEquals(Money::USD(12), $usd);
+    }
 
     /** @test */
     public function ParsesIso()
@@ -40,7 +56,7 @@ class CurrencyPairTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Money\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Can't create currency pair from ISO string '1.2500', format of string is invalid
      */
     public function ParsesIsoWithException()
@@ -49,7 +65,7 @@ class CurrencyPairTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Money\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Ratio must be numeric
      * @dataProvider provideNonNumericRatio
      */
@@ -81,7 +97,7 @@ class CurrencyPairTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Money\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage The Money has the wrong currency
      */
     public function testConvertWithInvalidCurrency()
@@ -95,7 +111,7 @@ class CurrencyPairTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider provideEqualityComparisonPairs
      */
-    public function testEqualityComparisons($pair1, $pair2, $equal)
+    public function testEqualityComparisons(CurrencyPair $pair1, CurrencyPair $pair2, $equal)
     {
         $this->assertSame($equal, $pair1->equals($pair2));
     }

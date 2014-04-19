@@ -2,7 +2,7 @@
 /**
  * This file is part of the Money library
  *
- * Copyright (c) 2011-2013 Mathias Verraes
+ * Copyright (c) 2011-2014 Mathias Verraes
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,6 +15,26 @@ use Money\Currency;
 
 class CurrencyTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Currency
+     */
+    protected $euro1;
+
+    /**
+     * @var Currency
+     */
+    protected $euro2;
+
+    /**
+     * @var Currency
+     */
+    protected $usd1;
+
+    /**
+     * @var Currency
+     */
+    protected $usd2;
+
     public function setUp()
     {
         $this->euro1 = new Currency('EUR');

@@ -2,7 +2,7 @@
 /**
  * This file is part of the Money library
  *
- * Copyright (c) 2011-2013 Mathias Verraes
+ * Copyright (c) 2011-2014 Mathias Verraes
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,33 +10,43 @@
 
 namespace Money;
 
-/** @see http://en.wikipedia.org/wiki/Currency_pair */
+use InvalidArgumentException;
+
+/**
+ * @see http://en.wikipedia.org/wiki/Currency_pair
+ */
 class CurrencyPair
 {
-    /** @var Currency */
+    /**
+     * @var Currency
+     */
     private $baseCurrency;
 
-    /** @var Currency */
+    /**
+     * @var Currency
+     */
     private $counterCurrency;
 
-    /** @var float */
+    /**
+     * @var float
+     */
     private $ratio;
 
     /**
-     * @param \Money\Currency $baseCurrency
-     * @param \Money\Currency $counterCurrency
+     * @param Currency $baseCurrency
+     * @param Currency $counterCurrency
      * @param float $ratio
-     * @throws \Money\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct(Currency $baseCurrency, Currency $counterCurrency, $ratio)
     {
-        if(!is_numeric($ratio)) {
+        if (!is_numeric($ratio)) {
             throw new InvalidArgumentException("Ratio must be numeric");
         }
 
         $this->counterCurrency = $counterCurrency;
         $this->baseCurrency = $baseCurrency;
-        $this->ratio = (float) $ratio;
+        $this->ratio = (float)$ratio;
     }
 
     /**
@@ -47,8 +57,9 @@ class CurrencyPair
     public static function createFromIso($iso)
     {
         $currency = "([A-Z]{2,3})";
-        $ratio = "([0-9]*\.?[0-9]+)"; // @see http://www.regular-expressions.info/floatingpoint.html
-        $pattern = '#'.$currency.'/'.$currency.' '.$ratio.'#';
+        // @see http://www.regular-expressions.info/floatingpoint.html
+        $ratio = '([0-9]*\.?[0-9]+)';
+        $pattern = '#' . $currency . '/' . $currency . ' ' . $ratio . '#';
 
         $matches = array();
         if (!preg_match($pattern, $iso, $matches)) {
@@ -65,47 +76,57 @@ class CurrencyPair
 
     /**
      * @param \Money\Money $money
+     * @param              $rounding_mode
      * @throws InvalidArgumentException
      * @return \Money\Money
      */
-    public function convert(Money $money)
+    public function convert(Money $money, RoundingMode $rounding_mode = null)
     {
         if (!$money->getCurrency()->equals($this->baseCurrency)) {
             throw new InvalidArgumentException("The Money has the wrong currency");
         }
 
-        // @todo add rounding mode?
-        return new Money((float) round($money->getAmount() * $this->ratio), $this->counterCurrency);
+        $rounding_mode = $rounding_mode ? : RoundingMode::halfUp();
+
+        return new Money(
+            (int)round($money->getAmount() * $this->ratio, 0, $rounding_mode->getRoundingMode()),
+            $this->counterCurrency
+        );
     }
 
-    /** @return \Money\Currency */
+    /**
+     * @return Currency
+     */
     public function getCounterCurrency()
     {
         return $this->counterCurrency;
     }
 
-    /** @return \Money\Currency */
+    /**
+     * @return Currency
+     */
     public function getBaseCurrency()
     {
         return $this->baseCurrency;
     }
 
-    /** @return float */
+    /**
+     * @return float
+     */
     public function getRatio()
     {
         return $this->ratio;
     }
-    
+
     /**
-     * @param \Money\CurrencyPair $other the currency pair to compare
+     * @param CurrencyPair $other
      * @return boolean
      */
     public function equals(CurrencyPair $other)
     {
-        return (
+        return
             $this->baseCurrency->equals($other->baseCurrency)
             && $this->counterCurrency->equals($other->counterCurrency)
-            && $this->ratio === $other->ratio
-        );
+            && $this->ratio === $other->ratio;
     }
 }
