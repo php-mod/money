@@ -50,6 +50,29 @@ class MoneyTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public static function assertEquals(
+        $expected, $actual, $message = '', $delta = 0, $maxDepth = 10,
+        $canonicalize = FALSE, $ignoreCase = FALSE)
+    {
+        if ($expected instanceof Money && $actual instanceof Money) {
+            self::assertEquals(
+                $expected->getAmount(),
+                $actual->getAmount()
+            );
+            self::assertEquals(
+                $expected->getCurrency(),
+                $actual->getCurrency()
+            );
+        } elseif (is_float($expected) && is_float($actual) && $delta == 0) {
+            $delta = 0.000000001;
+            parent::assertEquals($expected, $actual, $message, $delta, $maxDepth,
+                $canonicalize, $ignoreCase);
+        } else {
+            parent::assertEquals($expected, $actual, $message, $delta, $maxDepth,
+                $canonicalize, $ignoreCase);
+        }
+    }
+
     public function testGetters()
     {
         $m = new Money(100, $euro = new Currency('EUR'));
@@ -79,10 +102,10 @@ class MoneyTest extends PHPUnit_Framework_TestCase
 
     public function testAddition()
     {
-        $m1 = new Money(100, new Currency('EUR'));
-        $m2 = new Money(100, new Currency('EUR'));
+        $m1 = new Money(100.10, new Currency('EUR'));
+        $m2 = new Money(100.02, new Currency('EUR'));
         $sum = $m1->add($m2);
-        $expected = new Money(200, new Currency('EUR'));
+        $expected = new Money(200.12, new Currency('EUR'));
 
         $this->assertEquals($expected, $sum);
 
@@ -103,10 +126,10 @@ class MoneyTest extends PHPUnit_Framework_TestCase
 
     public function testSubtraction()
     {
-        $m1 = new Money(100, new Currency('EUR'));
-        $m2 = new Money(200, new Currency('EUR'));
+        $m1 = new Money(100.66, new Currency('EUR'));
+        $m2 = new Money(200.33, new Currency('EUR'));
         $diff = $m1->subtract($m2);
-        $expected = new Money(-100, new Currency('EUR'));
+        $expected = new Money(-99.67, new Currency('EUR'));
 
         $this->assertEquals($expected, $diff);
 
@@ -129,11 +152,11 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     {
         $m = new Money(1, new Currency('EUR'));
         $this->assertEquals(
-            new Money(2, new Currency('EUR')),
+            new Money(1.5, new Currency('EUR')),
             $m->multiply(1.5)
         );
         $this->assertEquals(
-            new Money(1, new Currency('EUR')),
+            new Money(1.5, new Currency('EUR')),
             $m->multiply(1.5, Money::ROUND_HALF_DOWN)
         );
 
@@ -144,15 +167,15 @@ class MoneyTest extends PHPUnit_Framework_TestCase
     {
         $m = new Money(10, new Currency('EUR'));
         $this->assertEquals(
-            new Money(3, new Currency('EUR')),
+            new Money(3.333333333, new Currency('EUR')),
             $m->divide(3)
         );
         $this->assertEquals(
-            new Money(2, new Currency('EUR')),
+            new Money(2.5, new Currency('EUR')),
             $m->divide(4, Money::ROUND_HALF_EVEN)
         );
         $this->assertEquals(
-            new Money(3, new Currency('EUR')),
+            new Money(3.333333333, new Currency('EUR')),
             $m->divide(3, Money::ROUND_HALF_ODD)
         );
 

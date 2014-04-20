@@ -184,19 +184,12 @@ class Money
 
     /**
      * @param $multiplier
-     * @param int|\Money\RoundingMode $rounding_mode
      * @return Money
      */
-    public function multiply($multiplier, $rounding_mode = self::ROUND_HALF_UP)
+    public function multiply($multiplier)
     {
         $this->assertOperand($multiplier);
-
-        if (!$rounding_mode instanceof RoundingMode) {
-            $rounding_mode = new RoundingMode($rounding_mode);
-        }
-
-        $product = (int)round($this->amount * $multiplier, 0, $rounding_mode->getRoundingMode());
-
+        $product = $this->amount * $multiplier;
         return new Money($product, $this->currency);
     }
 
@@ -212,19 +205,12 @@ class Money
 
     /**
      * @param $divisor
-     * @param int|\Money\RoundingMode $rounding_mode
      * @return Money
      */
-    public function divide($divisor, $rounding_mode = self::ROUND_HALF_UP)
+    public function divide($divisor)
     {
         $this->assertOperand($divisor);
-
-        if (!$rounding_mode instanceof RoundingMode) {
-            $rounding_mode = new RoundingMode($rounding_mode);
-        }
-
-        $quotient = (int)round($this->amount / $divisor, 0, $rounding_mode->getRoundingMode());
-
+        $quotient = $this->amount / $divisor;
         return new Money($quotient, $this->currency);
     }
 
